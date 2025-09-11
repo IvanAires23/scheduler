@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  scheduler-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    networks:
+      - network_swarm_public
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - network_swarm_public
+
+volumes:
+  redis_data:
+
+networks:
+  network_swarm_public:
+    name: network_swarm_public
+    external: true
