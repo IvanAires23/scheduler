@@ -2,9 +2,10 @@ version: '3.8'
 services:
   scheduler-api:
     image: python:3.9-slim
-    working_dir: /app
     command: |
       bash -c "
+        git clone https://github.com/IvanAires23/scheduler.git /app &&
+        cd /app &&
         pip install --no-cache-dir -r requirements.txt &&
         python scheduler_api.py
       "
@@ -16,26 +17,17 @@ services:
       - PYTHONPATH=/app
     depends_on:
       - redis
-    networks:
-      - network_swarm_public
-    volumes:
-      - type: bind
-        source: .
-        target: /app
-        
+    deploy:
+      replicas: 1
+      
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - network_swarm_public
+    deploy:
+      replicas: 1
       
 volumes:
   redis_data:
-  
-networks:
-  network_swarm_public:
-    name: network_swarm_public
-    external: true
